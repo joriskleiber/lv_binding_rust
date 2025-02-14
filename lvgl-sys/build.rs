@@ -165,22 +165,20 @@ fn main() {
 
     cfg.compile("lvgl");
 
-    let mut cc_args = vec![
+    // Set correct target triple for bindgen when cross-compiling or compiling on aarch64-apple-darwin
+    let target = env::var("CROSS_COMPILE")
+        .unwrap_or_else(|_| env::var("TARGET").expect("Cargo build scripts always have TARGET"));
+
+    let cc_args = vec![
         "-DLV_CONF_INCLUDE_SIMPLE=1",
         "-I",
         lv_config_dir.to_str().unwrap(),
         "-I",
         vendor.to_str().unwrap(),
         "-fvisibility=default",
+        "-target",
+        target.as_str(),
     ];
-
-    // Set correct target triple for bindgen when cross-compiling
-    let target = env::var("TARGET").expect("Cargo build scripts always have TARGET");
-    let host = env::var("HOST").expect("Cargo build scripts always have HOST");
-    if target != host {
-        cc_args.push("-target");
-        cc_args.push(target.as_str());
-    }
 
     let mut additional_args = Vec::new();
     if target.ends_with("emscripten") {
