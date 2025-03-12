@@ -35,7 +35,7 @@ fn main() -> Result<(), LvError> {
 
     // Create screen and widgets
     let binding = display?;
-    let screen = binding.get_scr_act();
+    let screen = binding.get_active_screen();
 
     println!("Before all widgets: {:?}", mem_info());
 

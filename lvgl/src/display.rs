@@ -1,15 +1,79 @@
-use crate::functions::CoreError;
-use crate::Screen;
-use crate::{disp_drv_register, disp_get_default, get_str_act, NativeObject};
-use crate::{Box, Color};
+use crate::{
+    disp_drv_register, disp_get_default, functions::CoreError, Box, Color, NativeObject, Obj,
+    Screen, Widget,
+};
+
 use core::convert::TryInto;
-#[cfg(feature = "nightly")]
 use core::error::Error;
 use core::fmt;
 use core::mem::{ManuallyDrop, MaybeUninit};
 use core::pin::Pin;
 use core::ptr::NonNull;
 use core::{ptr, result};
+
+// todo: maybe move to separate file
+#[doc(alias = "lv_screen_active")]
+/// Returns the currently active screen. To get the active screen for the default display, use `None`.
+pub fn get_active_screen(display: Option<&Display>) -> Result<Screen> {
+    unsafe {
+        let screen_ptr = lvgl_sys::lv_disp_get_scr_act(
+            display
+                .map(|d| d.display_pointer.as_ptr())
+                .unwrap_or(ptr::null_mut() as *mut lvgl_sys::lv_disp_t),
+        );
+
+        Screen::from_raw(NonNull::new(screen_ptr).ok_or(CoreError::ResourceNotAvailable)?)
+            .ok_or(CoreError::OperationFailed.into())
+    }
+}
+
+#[doc(alias = "lv_layer_sys")]
+/// Returns the currently sys layer. To get the sys layer for the default display, use `None`.
+pub fn get_sys_layer(display: Option<&Display>) -> Result<Obj> {
+    unsafe {
+        let layer_ptr = lvgl_sys::lv_disp_get_layer_sys(
+            display
+                .map(|d| d.display_pointer.as_ptr())
+                .unwrap_or(ptr::null_mut() as *mut lvgl_sys::lv_disp_t),
+        );
+
+        Obj::from_raw(NonNull::new(layer_ptr).ok_or(CoreError::ResourceNotAvailable)?)
+            .ok_or(CoreError::OperationFailed.into())
+    }
+}
+
+#[doc(alias = "lv_layer_top")]
+/// Returns the currently sys layer. To get the sys layer for the default display, use `None`.
+pub fn get_top_layer(display: Option<&Display>) -> Result<Obj> {
+    unsafe {
+        let layer_ptr = lvgl_sys::lv_disp_get_layer_top(
+            display
+                .map(|d| d.display_pointer.as_ptr())
+                .unwrap_or(ptr::null_mut() as *mut lvgl_sys::lv_disp_t),
+        );
+
+        Obj::from_raw(NonNull::new(layer_ptr).ok_or(CoreError::ResourceNotAvailable)?)
+            .ok_or(CoreError::OperationFailed.into())
+    }
+}
+
+// #[doc(alias = "lv_scr_load")]
+// /// Returns the currently sys layer. To get the sys layer for the default display, use `None`.
+// pub fn load_screen(display: Option<&Display>) -> Result<Obj> {
+//     let layer_ptr: *mut _ = unsafe {
+//         lvgl_sys::lv_disp_load_scr(
+//             display
+//                 .map(|d| d.display_pointer.as_ptr())
+//                 .unwrap_or(ptr::null_mut() as *mut lvgl_sys::lv_disp_t),
+//         )
+//     };
+
+//     match unsafe { Obj::from_raw(NonNull::new(layer_ptr).ok_or(CoreError::ResourceNotAvailable)?) }
+//     {
+//         Some(o) => Ok(o),
+//         None => Err(CoreError::OperationFailed.into()),
+//     }
+// }
 
 /// Error in interacting with a `Display`.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -33,23 +97,26 @@ impl fmt::Display for DisplayError {
     }
 }
 
-#[cfg(feature = "nightly")]
 impl Error for DisplayError {}
 
 type Result<T> = result::Result<T, DisplayError>;
 
-/// An LVGL-registered display. Equivalent to an `lv_disp_t`.
+#[doc(alias = "lv_disp_t")]
+/// An LVGL-registered display.
 pub struct Display {
-    pub(crate) disp: NonNull<lvgl_sys::lv_disp_t>,
+    pub(crate) display_pointer: NonNull<lvgl_sys::lv_disp_t>,
     drop: Option<unsafe extern "C" fn()>,
 }
 
 impl<'a> Display {
     pub(crate) fn from_raw(
-        disp: NonNull<lvgl_sys::lv_disp_t>,
+        display_pointer: NonNull<lvgl_sys::lv_disp_t>,
         drop: Option<unsafe extern "C" fn()>,
     ) -> Self {
-        Self { disp, drop }
+        Self {
+            display_pointer,
+            drop,
+        }
     }
 
     /// Registers a given `DrawBuffer` with an associated update function to
@@ -68,18 +135,52 @@ impl<'a> Display {
         disp_p.hor_res = hor_res.try_into().unwrap_or(240);
         disp_p.ver_res = ver_res.try_into().unwrap_or(240);
         Ok(disp_drv_register(&mut display_diver, None)?)
-        //display_diver.disp_drv.leak();
     }
 
-    /// Returns the current active screen.
-    pub fn get_scr_act(&'a self) -> Result<Screen<'a>> {
-        Ok(get_str_act(Some(self))?.try_into()?)
+    #[doc(alias = "lv_display_get_screen_active")]
+    /// Returns the current active screen for a Display.
+    pub fn get_active_screen(&'a self) -> Result<Screen<'a>> {
+        get_active_screen(Some(self))
     }
 
-    /// Sets a `Screen` as currently active.
-    pub fn set_scr_act(&'a self, screen: &'a mut Screen) {
-        let scr_ptr = unsafe { screen.raw().as_mut() };
-        unsafe { lvgl_sys::lv_disp_load_scr(scr_ptr) }
+    #[doc(alias = "lv_disp_load_scr")]
+    /// Loads a `Screen` as currently active.
+    pub fn load_screen(&'a self, screen: &'a mut Screen) {
+        unsafe {
+            let scr_ptr = screen.raw().as_mut();
+            lvgl_sys::lv_disp_load_scr(scr_ptr);
+        }
+    }
+
+    #[doc(alias = "lv_scr_load_anim")]
+    /// Loads a `Screen` as currently active with a transition.
+    pub fn load_screen_with_animation(
+        &'a self,
+        screen: &'a mut Screen,
+        transition_type: lvgl_sys::lv_scr_load_anim_t,
+        time: u32,
+        delay: u32,
+        auto_del: bool,
+    ) {
+        unsafe {
+            let scr_ptr = screen.raw().as_mut();
+            lvgl_sys::lv_scr_load_anim(scr_ptr, transition_type, time, delay, auto_del);
+        }
+    }
+
+    #[doc(alias = "lv_display_get_layer_top")]
+    pub fn get_top_layer(&'a self) -> Result<Obj<'a>> {
+        get_top_layer(Some(self))
+    }
+
+    #[doc(alias = "lv_display_get_layer_sys")]
+    pub fn get_sys_layer(&'a self) -> Result<Obj<'a>> {
+        get_sys_layer(Some(self))
+    }
+
+    #[doc(alias = "lv_display_get_layer_bottom")]
+    pub fn get_layer_bottom(&'a self) -> Result<Obj<'a>> {
+        todo!("Implement get_layer_bottom")
     }
 
     /// Registers a display from raw functions and values.
@@ -155,10 +256,10 @@ impl Drop for Display {
     }
 }
 
-/// Gets the active screen of the default display.
-pub(crate) fn get_scr_act() -> Result<Screen<'static>> {
-    Ok(get_str_act(None)?.try_into()?)
-}
+// /// Gets the system layer of the default display.
+// pub(crate) fn get_layer_sys() -> Result<Screen<'static>> {
+//     Ok(get_layer_sys(None)?.try_into()?)
+// }
 
 /// A buffer of size `N` representing `N` pixels. `N` can be smaller than the
 /// entire number of pixels on the screen, in which case the screen will be
@@ -388,9 +489,9 @@ mod tests {
     use crate::tests;
 
     #[test]
-    fn get_scr_act_return_display() {
+    fn get_active_screen_return_display() {
         tests::initialize_test(true);
-        let _screen = get_str_act(None).expect("We can get the active screen");
+        let _screen = get_active_screen(None).expect("We can get the active screen");
     }
 
     #[test]
@@ -398,9 +499,10 @@ mod tests {
         tests::initialize_test(true);
         let display = Display::default();
         let _screen_direct = display
-            .get_scr_act()
+            .get_active_screen()
             .expect("Return screen directly from the display instance");
-        let _screen_default = get_scr_act().expect("Return screen from the default display");
+        let _screen_default =
+            get_active_screen(None).expect("Return screen from the default display");
     }
 
     #[test]
@@ -408,7 +510,7 @@ mod tests {
         crate::tests::initialize_test(true);
         let display = Display::default();
         let _screen = display
-            .get_scr_act()
+            .get_active_screen()
             .expect("Return screen directly from the display instance");
         Ok(())
     }

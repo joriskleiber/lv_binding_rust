@@ -122,7 +122,7 @@ impl Rusty for LvFunc {
                 }
 
                 pub fn new() -> crate::LvResult<Self> {
-                    let mut parent = crate::display::get_scr_act()?;
+                    let mut parent = crate::display::get_active_screen(None)?;
                     Self::create(&mut parent)
                 }
 
@@ -144,7 +144,7 @@ impl Rusty for LvFunc {
                     "i16" => quote!(i16),
                     "u8" => quote!(u8),
                     "i8" => quote!(i8),
-                    _ => return Err(WrapperError::Skip)
+                    _ => return Err(WrapperError::Skip),
                 }
             }
         };
@@ -158,30 +158,30 @@ impl Rusty for LvFunc {
         //
         // - Iif the first argument (of the C function) is const then we require a &self immutable reference, otherwise an &mut self reference
         // - The arguments will be appended to the accumulator (args_accumulator) as they are generated in the closure
-        let args_decl = self
-            .args
-            .iter()
-            .enumerate()
-            .fold(quote!(), |args_accumulator, (arg_idx, arg)| {
-                let next_arg = if arg_idx == 0 {
-                    if arg.get_type().is_const() {
-                        quote!(&self)
+        let args_decl =
+            self.args
+                .iter()
+                .enumerate()
+                .fold(quote!(), |args_accumulator, (arg_idx, arg)| {
+                    let next_arg = if arg_idx == 0 {
+                        if arg.get_type().is_const() {
+                            quote!(&self)
+                        } else {
+                            quote!(&mut self)
+                        }
                     } else {
-                        quote!(&mut self)
-                    }
-                } else {
-                    arg.code(self).unwrap()
-                };
+                        arg.code(self).unwrap()
+                    };
 
-                // If the accummulator is empty then we call quote! only with the next_arg content
-                if args_accumulator.is_empty() {
-                    quote! {#next_arg}
-                }
-                // Otherwise we append next_arg at the end of the accumulator
-                else {
-                    quote! {#args_accumulator, #next_arg}
-                }
-            });
+                    // If the accummulator is empty then we call quote! only with the next_arg content
+                    if args_accumulator.is_empty() {
+                        quote! {#next_arg}
+                    }
+                    // Otherwise we append next_arg at the end of the accumulator
+                    else {
+                        quote! {#args_accumulator, #next_arg}
+                    }
+                });
 
         let args_processing = self
             .args
@@ -212,27 +212,27 @@ impl Rusty for LvFunc {
         // - The first argument will be always self.core.raw().as_mut() (see quote! when arg_idx == 0), it's most likely a pointer to lv_obj_t
         //   TODO: When handling getters this should be self.raw().as_ptr() instead, this also requires updating args_decl
         // - The arguments will be appended to the accumulator (args_accumulator) as they are generated in the closure
-        let ffi_args = self
-            .args
-            .iter()
-            .enumerate()
-            .fold(quote!(), |args_accumulator, (arg_idx, arg)| {
-                let next_arg = if arg_idx == 0 {
-                    quote!(self.core.raw().as_mut())
-                } else {
-                    let var = arg.get_value_usage();
-                    quote!(#var)
-                };
+        let ffi_args =
+            self.args
+                .iter()
+                .enumerate()
+                .fold(quote!(), |args_accumulator, (arg_idx, arg)| {
+                    let next_arg = if arg_idx == 0 {
+                        quote!(self.core.raw().as_mut())
+                    } else {
+                        let var = arg.get_value_usage();
+                        quote!(#var)
+                    };
 
-                // If the accummulator is empty then we call quote! only with the next_arg content
-                if args_accumulator.is_empty() {
-                    quote! {#next_arg}
-                }
-                // Otherwise we append next_arg at the end of the accumulator
-                else {
-                    quote! {#args_accumulator, #next_arg}
-                }
-            });
+                    // If the accummulator is empty then we call quote! only with the next_arg content
+                    if args_accumulator.is_empty() {
+                        quote! {#next_arg}
+                    }
+                    // Otherwise we append next_arg at the end of the accumulator
+                    else {
+                        quote! {#args_accumulator, #next_arg}
+                    }
+                });
 
         // NOTE: When the function returns something we can 'avoid' placing an Ok() at the end.
         let explicit_ok = if return_type.is_empty() {
@@ -243,9 +243,9 @@ impl Rusty for LvFunc {
 
         // Append a semicolon at the end of the unsafe code only if there's no return value.
         // Otherwise we should remove it
-        let optional_semicolon= match self.ret {
+        let optional_semicolon = match self.ret {
             None => quote!(;),
-            _ => quote!()
+            _ => quote!(),
         };
 
         Ok(quote! {
@@ -786,7 +786,7 @@ mod test {
                 }
 
                 pub fn new() -> crate::LvResult<Self> {
-                    let mut parent = crate::display::get_scr_act()?;
+                    let mut parent = crate::display::get_active_screen(None)?;
                     Self::create(&mut parent)
                 }
             }

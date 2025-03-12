@@ -32,7 +32,7 @@ fn main() -> Result<(), LvError> {
             .unwrap();
     })?;
 
-    let mut screen = display.get_scr_act()?;
+    let mut screen = display.get_active_screen()?;
 
     let mut screen_style = Style::default();
     screen_style.set_bg_color(Color::from_rgb((0, 0, 0)));

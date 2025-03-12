@@ -72,7 +72,7 @@ mod test {
         crate::tests::initialize_test(false);
         let buffer = DrawBuffer::<{ (HOR_RES * VER_RES) as usize }>::default();
         let display = Display::register(buffer, HOR_RES, VER_RES, |_| {}).unwrap();
-        let mut screen_old = display.get_scr_act().unwrap();
+        let mut screen_old = display.get_active_screen().unwrap();
         let mut screen_new = Screen::blank().unwrap();
         display.set_scr_act(&mut screen_new);
         display.set_scr_act(&mut screen_old);

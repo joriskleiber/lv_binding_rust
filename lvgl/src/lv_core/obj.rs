@@ -56,7 +56,7 @@ impl<'a> Obj<'a> {
     }
 
     pub fn new() -> crate::LvResult<Self> {
-        let mut parent = crate::display::get_scr_act()?;
+        let mut parent = crate::display::get_active_screen(None)?;
         Self::create(unsafe { &mut *(&mut parent as *mut _) })
     }
 
@@ -69,6 +69,13 @@ impl<'a> Obj<'a> {
             None => Err(LvError::LvOOMemory),
         }
     }
+
+    // pub fn from_raw(raw: NonNull<lvgl_sys::lv_obj_t>) -> Self {
+    //     Self {
+    //         raw,
+    //         dependents: PhantomData,
+    //     }
+    // }
 }
 
 impl NativeObject for Obj<'_> {
@@ -92,6 +99,7 @@ pub trait Widget<'a>: NativeObject + Sized + 'a {
     unsafe fn from_raw(raw_pointer: ptr::NonNull<lvgl_sys::lv_obj_t>) -> Option<Self>;
 
     /// Adds a `Style` to a given widget.
+    // todo: hold a reference to the style or else it will be dropped
     fn add_style(&mut self, part: Self::Part, style: &'a mut Style) {
         unsafe {
             lvgl_sys::lv_obj_add_style(
@@ -147,6 +155,13 @@ pub trait Widget<'a>: NativeObject + Sized + 'a {
                 x_mod as lvgl_sys::lv_coord_t,
                 y_mod as lvgl_sys::lv_coord_t,
             );
+        }
+    }
+
+    /// Clears a widget's flag.
+    fn clear_flag(&mut self, flag: lvgl_sys::lv_obj_flag_t) {
+        unsafe {
+            lvgl_sys::lv_obj_clear_flag(self.raw().as_mut(), flag);
         }
     }
 }
@@ -252,7 +267,7 @@ macro_rules! define_object {
 //     }
 //
 //     pub fn new() -> crate::LvResult<Self> {
-//         let mut parent = crate::display::get_scr_act()?;
+//         let mut parent = crate::display::get_active_screen(None)?;
 //         Ok(Self::create_at(&mut parent)?)
 //     }
 // }

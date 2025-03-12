@@ -42,7 +42,7 @@ fn main() -> Result<(), LvError> {
     let _touch_screen = Pointer::register(|| latest_touch_status, &display)?;
 
     // Create screen and widgets
-    let mut screen = display.get_scr_act()?;
+    let mut screen = display.get_active_screen()?;
 
     let mut screen_style = Style::default();
     screen_style.set_bg_color(Color::from_rgb((0, 0, 0)));

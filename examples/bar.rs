@@ -28,7 +28,7 @@ fn main() -> Result<(), LvError> {
         sim_display.draw_iter(refresh.as_pixels()).unwrap();
     })?;
 
-    let mut screen = display.get_scr_act()?;
+    let mut screen = display.get_active_screen()?;
 
     let mut screen_style = Style::default();
     screen_style.set_bg_color(Color::from_rgb((255, 255, 255)));

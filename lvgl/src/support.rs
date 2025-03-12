@@ -1,7 +1,6 @@
 use crate::display::DisplayError;
 use crate::Widget;
 use core::convert::{TryFrom, TryInto};
-#[cfg(feature = "nightly")]
 use core::error::Error;
 use core::fmt;
 use core::ptr::NonNull;
@@ -34,7 +33,6 @@ impl fmt::Display for LvError {
     }
 }
 
-#[cfg(feature = "nightly")]
 impl Error for LvError {}
 
 impl From<DisplayError> for LvError {

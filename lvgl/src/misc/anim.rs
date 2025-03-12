@@ -133,7 +133,7 @@ mod test {
     fn anim_test() {
         crate::tests::initialize_test(true);
         let display = Display::default();
-        let mut screen = display.get_scr_act().unwrap();
+        let mut screen = display.get_active_screen().unwrap();
         let mut btn = Btn::create(&mut screen).unwrap();
         let mut anim =
             Animation::new(&mut btn, Duration::from_millis(10), 0, 100, |_, _| {}).unwrap();
