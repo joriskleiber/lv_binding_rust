@@ -1,4 +1,3 @@
-use cstr_core::CString;
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics::prelude::*;
 use embedded_graphics_simulator::{
@@ -10,6 +9,7 @@ use lvgl::style::Style;
 use lvgl::widgets::Label;
 use lvgl::{Align, Color, Display, DrawBuffer, LvError, Part, TextAlign, Widget};
 use lvgl_sys;
+use std::ffi::CString;
 use std::thread::sleep;
 use std::time::Duration;
 use std::time::Instant;

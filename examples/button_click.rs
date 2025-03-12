@@ -1,4 +1,3 @@
-use cstr_core::CString;
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics::prelude::*;
 use embedded_graphics_simulator::{
@@ -51,18 +50,16 @@ fn main() -> Result<(), LvError> {
     button.set_align(Align::LeftMid, 30, 0);
     button.set_size(180, 80);
     let mut btn_lbl = Label::create(&mut button)?;
-    btn_lbl.set_text(CString::new("Click me!").unwrap().as_c_str())?;
+    btn_lbl.set_text(c"Click me!")?;
 
     let mut btn_state = false;
     button.on_event(|_btn, event| {
         println!("Button received event: {:?}", event);
         if let lvgl::Event::Clicked = event {
             if btn_state {
-                let nt = CString::new("Click me!").unwrap();
-                btn_lbl.set_text(nt.as_c_str()).unwrap();
+                btn_lbl.set_text(c"Click me!").unwrap();
             } else {
-                let nt = CString::new("Clicked!").unwrap();
-                btn_lbl.set_text(nt.as_c_str()).unwrap();
+                btn_lbl.set_text(c"Clicked!").unwrap();
             }
             btn_state = !btn_state;
         }

@@ -2,7 +2,10 @@
 name = "lvgl"
 description = "LVGL bindings for Rust. A powerful and easy-to-use embedded GUI with many widgets, advanced visual effects (opacity, antialiasing, animations) and low memory requirements (16K RAM, 64K Flash)."
 version = "0.6.2"
-authors = ["Rafael Caricio <crates.lvgl@caric.io>", "Nia Espera <a5b6@riseup.net>"]
+authors = [
+    "Rafael Caricio <crates.lvgl@caric.io>",
+    "Nia Espera <a5b6@riseup.net>",
+]
 edition = "2021"
 repository = "https://github.com/rafaelcaricio/lvgl-rs"
 license = "MIT"
@@ -15,7 +18,6 @@ build = "build.rs"
 lvgl-sys = { version = "0.6.2", path = "../lvgl-sys" }
 cty = "0.2.2"
 embedded-graphics = { version = "0.8.0", optional = true }
-cstr_core = { version = "0.2.6", default-features = false, features = ["alloc"] }
 bitflags = "2.3.2"
 paste = "1.0.12"
 ctor = "0.2.2"
@@ -36,7 +38,7 @@ drivers = ["lvgl-sys/drivers"]
 
 # Enable using the alloc crate internally on platforms that support it. Check
 # if your platform supports this crate before enabling.
-alloc = ["cstr_core/alloc"]
+alloc = []
 
 # Sets the LVGL allocator as Rust's global allocator. This places ALL memory in
 # LVGL-handled space, and may require growing the memory pool in lv_conf.h
@@ -55,11 +57,9 @@ rust_timer = ["lvgl-sys/rust_timer"]
 # Enables using a custom tick function supplied in lv_conf.h
 custom_timer = ["lvgl-sys/custom_timer"]
 
-# Enables some unstable features. Currently, #![feature(cfg_accessible)] and
-# #![feature(error_in_core)] are used.
+# Enables some unstable features. Currently, #![feature(cfg_accessible)] is used.
 # This feature will currently allow:
 # - Using built-in LVGL fonts other than the default
-# - Handling LvErrors/LvResults with error-handling libraries i.e. anyhow
 nightly = []
 
 # Disables auto-initializing LVGL.

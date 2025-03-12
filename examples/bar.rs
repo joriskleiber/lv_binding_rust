@@ -1,4 +1,3 @@
-use cstr_core::CString;
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics::prelude::*;
 use embedded_graphics_simulator::{
@@ -50,7 +49,7 @@ fn main() -> Result<(), LvError> {
     bar.add_style(Part::Any, &mut ind_style);
 
     let mut loading_lbl = Label::create(&mut screen)?;
-    loading_lbl.set_text(CString::new("Loading...").unwrap().as_c_str())?;
+    loading_lbl.set_text(c"Loading...")?;
     loading_lbl.set_align(Align::OutTopMid, 0, 0);
 
     let mut loading_style = Style::default();

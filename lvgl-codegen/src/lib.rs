@@ -385,7 +385,7 @@ impl Rusty for LvType {
         match TYPE_MAPPINGS.get(self.literal_name.as_str()) {
             Some(name) => {
                 let val = if self.is_str() {
-                    quote!(&cstr_core::CStr)
+                    quote!(&core::ffi::CStr)
                 } else if self.literal_name.contains("lv_") {
                     let ident = format_ident!("{}", name);
                     quote!(&#ident)
@@ -518,7 +518,7 @@ mod test {
 
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();
 
-        let ffn = cg.get(0).unwrap();
+        let ffn = cg.first().unwrap();
         assert_eq!(ffn.name, "lv_obj_get_screen");
         assert_eq!(ffn.args[0].name, "obj");
     }
@@ -613,7 +613,7 @@ mod test {
         };
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();
 
-        let label_set_text = cg.get(0).unwrap().clone();
+        let label_set_text = cg.first().unwrap().clone();
         let parent_widget = LvWidget {
             name: "label".to_string(),
             methods: vec![],
@@ -622,7 +622,7 @@ mod test {
         let code = label_set_text.code(&parent_widget).unwrap();
         let expected_code = quote! {
 
-            pub fn set_text(&mut self, text: &cstr_core::CStr) -> () {
+            pub fn set_text(&mut self, text: &core::ffi::CStr) -> () {
                 unsafe {
                     lvgl_sys::lv_label_set_text(
                         self.core.raw().as_mut(),
@@ -648,7 +648,7 @@ mod test {
         };
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();
 
-        let label_set_text = cg.get(0).unwrap().clone();
+        let label_set_text = cg.first().unwrap().clone();
         let parent_widget = LvWidget {
             name: "label".to_string(),
             methods: vec![],
@@ -656,7 +656,7 @@ mod test {
 
         let code = label_set_text.code(&parent_widget).unwrap();
         let expected_code = quote! {
-            pub fn set_text(&mut self, text: &cstr_core::CStr) -> () {
+            pub fn set_text(&mut self, text: &core::ffi::CStr) -> () {
                 unsafe {
                     lvgl_sys::lv_label_set_text(
                         self.core.raw().as_mut(),
@@ -678,7 +678,7 @@ mod test {
         };
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();
 
-        let label_get_recolor = cg.get(0).unwrap().clone();
+        let label_get_recolor = cg.first().unwrap().clone();
         let parent_widget = LvWidget {
             name: "label".to_string(),
             methods: vec![],
@@ -707,7 +707,7 @@ mod test {
         };
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();
 
-        let label_get_text_selection_start = cg.get(0).unwrap().clone();
+        let label_get_text_selection_start = cg.first().unwrap().clone();
         let parent_widget = LvWidget {
             name: "label".to_string(),
             methods: vec![],

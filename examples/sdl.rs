@@ -3,7 +3,6 @@
 //#![allow(unused_variables)]
 //#![allow(unreachable_code)]
 
-use cstr_core::CString;
 use lvgl::input_device::InputDriver;
 use lvgl::lv_drv_disp_sdl;
 use lvgl::lv_drv_input_pointer_sdl;
@@ -41,11 +40,9 @@ fn main() -> LvResult<()> {
         println!("Button received event: {:?}", event);
         if let lvgl::Event::Clicked = event {
             if btn_state {
-                let nt = CString::new("Click me!").unwrap();
-                btn_lbl.set_text(nt.as_c_str()).unwrap();
+                btn_lbl.set_text(c"Click me!").unwrap();
             } else {
-                let nt = CString::new("Clicked!").unwrap();
-                btn_lbl.set_text(nt.as_c_str()).unwrap();
+                btn_lbl.set_text(c"Clicked!").unwrap();
             }
             btn_state = !btn_state;
         }

@@ -5,12 +5,11 @@ use crate::{LabelLongMode, NativeObject};
 mod alloc_imp {
     use crate::widgets::Label;
     //use crate::LvError;
-    use cstr_core::CString;
+    use alloc::ffi::CString;
     //use core::convert::TryFrom;
 
     impl<S: AsRef<str>> From<S> for Label<'_> {
         fn from(text: S) -> Self {
-            // text.try_into().unwrap()
             let text_cstr = CString::new(text.as_ref()).unwrap();
             let mut label = Label::new().unwrap();
             label.set_text(text_cstr.as_c_str());
