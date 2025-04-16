@@ -301,13 +301,13 @@ pub(crate) struct DisplayDriver<const N: usize> {
     _buffer: DrawBuffer<N>,
 }
 
-impl<'a, const N: usize> DisplayDriver<N> {
+impl<const N: usize> DisplayDriver<N> {
     pub fn new<F>(
         mut draw_buffer: DrawBuffer<N>,
         display_update_callback: F,
     ) -> Result<ManuallyDrop<Self>>
     where
-        F: FnMut(&DisplayRefresh<N>) + 'a,
+        F: FnMut(&DisplayRefresh<N>),
     {
         let mut disp_drv = Box::pin(unsafe {
             let mut inner = MaybeUninit::uninit();

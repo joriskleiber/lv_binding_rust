@@ -23,10 +23,7 @@ impl<'a> Widget<'a> for Screen<'a> {
     type Part = Part;
 
     unsafe fn from_raw(raw: core::ptr::NonNull<lvgl_sys::lv_obj_t>) -> Option<Self> {
-        match Self::try_from(Obj::from_raw(raw)?) {
-            Ok(s) => Some(s),
-            Err(_) => None,
-        }
+        Self::try_from(Obj::from_raw(raw)?).ok()
     }
 }
 
@@ -74,7 +71,7 @@ mod test {
         let display = Display::register(buffer, HOR_RES, VER_RES, |_| {}).unwrap();
         let mut screen_old = display.get_active_screen().unwrap();
         let mut screen_new = Screen::blank().unwrap();
-        display.set_scr_act(&mut screen_new);
-        display.set_scr_act(&mut screen_old);
+        display.load_screen(&mut screen_new);
+        display.load_screen(&mut screen_old);
     }
 }

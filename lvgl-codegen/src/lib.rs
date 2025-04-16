@@ -73,7 +73,7 @@ impl Rusty for LvWidget {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LvFunc {
     name: String,
     args: Vec<LvArg>,
@@ -287,7 +287,7 @@ impl From<ForeignItemFn> for LvFunc {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LvArg {
     name: String,
     typ: LvType,
@@ -352,6 +352,14 @@ impl Rusty for LvArg {
 pub struct LvType {
     literal_name: String,
     _r_type: Option<Box<syn::Type>>,
+}
+
+impl std::fmt::Debug for LvType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("LvType")
+            .field("literal_name", &self.literal_name)
+            .finish_non_exhaustive()
+    }
 }
 
 impl LvType {
@@ -454,7 +462,7 @@ impl CodeGen {
 
         functions
             .iter()
-            .filter(|e| create_func.is_match(e.name.as_str()) && e.args.len() == 1)
+            .filter(|f| create_func.is_match(f.name.as_str()) && f.args.len() == 1)
             .map(|f| {
                 String::from(
                     create_func

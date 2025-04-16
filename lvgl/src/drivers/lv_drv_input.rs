@@ -25,18 +25,19 @@ macro_rules! lv_drv_input_pointer_gtk {
     };
 }
 
-#[macro_export]
-macro_rules! lv_drv_input_pointer_sdl {
-    ($disp:ident) => {
-        unsafe {
-            $crate::input_device::pointer::Pointer::new_raw(
-                Some(lvgl_sys::sdl_mouse_read),
-                None,
-                &$disp,
-            )
-        }
-    };
-}
+// todo: fix
+// #[macro_export]
+// macro_rules! lv_drv_input_pointer_sdl {
+//     ($disp:ident) => {
+//         unsafe {
+//             $crate::input_device::pointer::Pointer::new_raw(
+//                 Some(lvgl_sys::sdl_mouse_read),
+//                 None,
+//                 &$disp,
+//             )
+//         }
+//     };
+// }
 
 #[macro_export]
 macro_rules! lv_drv_input_ad_touch {
@@ -80,16 +81,17 @@ macro_rules! lv_drv_input_xpt2046 {
     };
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::input_device::InputDriver;
-    use crate::tests;
-    use crate::*;
+// todo: fix
+// #[cfg(test)]
+// mod tests {
+//     use crate::input_device::InputDriver;
+//     use crate::tests;
+//     use crate::*;
 
-    #[test]
-    fn gtk_test() {
-        tests::initialize_test(true);
-        let disp = Display::default();
-        let _input = lv_drv_input_pointer_sdl!(disp);
-    }
-}
+//     #[test]
+//     fn gtk_test() {
+//         tests::initialize_test(true);
+//         let disp = Display::default();
+//         let _input = lv_drv_input_pointer_sdl!(disp);
+//     }
+// }

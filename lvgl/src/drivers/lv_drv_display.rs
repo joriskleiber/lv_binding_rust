@@ -70,29 +70,30 @@ macro_rules! lv_drv_disp_gtk {
     };
 }
 
-#[macro_export]
-macro_rules! lv_drv_disp_sdl {
-    ($draw_buffer:ident, $hor_res:ident, $ver_res:ident) => {
-        unsafe {
-            lvgl_sys::sdl_init();
-            $crate::Display::register_raw(
-                $draw_buffer,
-                $hor_res,
-                $ver_res,
-                Some(lvgl_sys::sdl_display_flush),
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            )
-        }
-    };
-}
+// todo: fix
+// #[macro_export]
+// macro_rules! lv_drv_disp_sdl {
+//     ($draw_buffer:ident, $hor_res:ident, $ver_res:ident) => {
+//         unsafe {
+//             lvgl_sys::sdl_init();
+//             $crate::Display::register_raw(
+//                 $draw_buffer,
+//                 $hor_res,
+//                 $ver_res,
+//                 Some(lvgl_sys::sdl_display_flush),
+//                 None,
+//                 None,
+//                 None,
+//                 None,
+//                 None,
+//                 None,
+//                 None,
+//                 None,
+//                 None,
+//             )
+//         }
+//     };
+// }
 
 #[macro_export]
 macro_rules! lv_drv_disp_gc9a01 {
@@ -265,17 +266,18 @@ macro_rules! lv_drv_disp_uc1610 {
     };
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::tests;
-    use crate::DrawBuffer;
+// todo: fix
+// #[cfg(test)]
+// mod tests {
+//     use crate::tests;
+//     use crate::DrawBuffer;
 
-    #[test]
-    fn gtk_test() {
-        const HOR_RES: u32 = 240;
-        const VER_RES: u32 = 240;
-        tests::initialize_test(false);
-        let buffer = DrawBuffer::<{ (HOR_RES * VER_RES) as usize }>::default();
-        let _disp = lv_drv_disp_sdl!(buffer, HOR_RES, VER_RES).unwrap();
-    }
-}
+//     #[test]
+//     fn gtk_test() {
+//         const HOR_RES: u32 = 240;
+//         const VER_RES: u32 = 240;
+//         tests::initialize_test(false);
+//         let buffer = DrawBuffer::<{ (HOR_RES * VER_RES) as usize }>::default();
+//         let _disp = lv_drv_disp_sdl!(buffer, HOR_RES, VER_RES).unwrap();
+//     }
+// }

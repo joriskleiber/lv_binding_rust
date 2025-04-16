@@ -25,9 +25,8 @@ impl<T> Box<T> {
             );
 
             NonNull::new(ptr)
-                .map(|p| {
+                .inspect(|p| {
                     p.as_ptr().write(value);
-                    p
                 })
                 .unwrap_or_else(|| {
                     panic!("Could not allocate memory {} bytes: {:?}", size, mem_info());

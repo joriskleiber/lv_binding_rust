@@ -56,9 +56,8 @@ fn main() {
     let cflags_extra = env::var("LVGL_CFLAGS").unwrap_or_default();
     let cflags_extra = cflags_extra.split(',').filter(|s| !s.is_empty());
 
-    #[cfg(feature = "drivers")]
-    let link_extra = env::var("LVGL_LINK").unwrap_or("SDL2".to_string());
-
+    // #[cfg(feature = "drivers")]
+    // let link_extra = env::var("LVGL_LINK").unwrap_or("SDL2".to_string());
     #[cfg(feature = "drivers")]
     let drivers = vendor.join("lv_drivers");
 
@@ -245,11 +244,11 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Can't write bindings!");
 
-    #[cfg(feature = "drivers")]
-    link_extra.split(',').for_each(|a| {
-        println!("cargo:rustc-link-lib={a}");
-        //println!("cargo:rustc-link-search=")
-    })
+    // #[cfg(feature = "drivers")]
+    // link_extra.split(',').for_each(|a| {
+    //     println!("cargo:rustc-link-lib={a}");
+    //     //println!("cargo:rustc-link-search=")
+    // })
 }
 
 fn add_font_headers(

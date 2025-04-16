@@ -1,6 +1,6 @@
 use crate::display::{Display, DisplayDriver};
 use crate::input_device::InputDriver;
-use crate::{Event, LvError, LvResult, Obj, Widget};
+use crate::{Event, LvError, LvResult, Widget};
 use core::ptr::NonNull;
 #[cfg(not(feature = "rust_timer"))]
 use core::time::Duration;

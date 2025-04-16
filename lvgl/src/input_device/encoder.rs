@@ -181,6 +181,7 @@ mod test {
     use embedded_graphics::prelude::OriginDimensions;
     use embedded_graphics::Pixel;
 
+    #[allow(dead_code)]
     struct FakeDisplay<C>
     where
         C: PixelColor,

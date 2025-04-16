@@ -9,3 +9,7 @@
 examples/demo/target/
 lvgl-sys/target/
 lvgl/target/
+
+.cargo
+lv_conf.h
+lv_drv_conf.h
