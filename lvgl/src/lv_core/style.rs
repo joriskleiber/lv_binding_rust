@@ -16,10 +16,10 @@
 //! counterparts.
 
 use crate::{font::Font, Align, Box, Color, TextAlign};
+use core::ffi::c_uint;
 use core::fmt;
 use core::fmt::Debug;
 use core::mem::{self, MaybeUninit};
-use cty::c_uint;
 use paste::paste;
 
 pub enum Themes {

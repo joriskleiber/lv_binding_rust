@@ -20,7 +20,7 @@ lazy_static! {
         ("i32", "i32"),
         ("u8", "u8"),
         ("bool", "bool"),
-        ("* const cty :: c_char", "_"),
+        ("* const core :: ffi :: c_char", "_"),
     ]
     .iter()
     .cloned()
@@ -382,7 +382,7 @@ impl LvType {
     }
 
     pub fn is_str(&self) -> bool {
-        self.literal_name.ends_with("* const cty :: c_char")
+        self.literal_name.ends_with("* const core:: ffi :: c_char")
     }
 }
 
@@ -616,7 +616,7 @@ mod test {
                 #[doc = " Set a new text for a label. Memory will be allocated to store the text by the label."]
                 #[doc = " @param label pointer to a label object"]
                 #[doc = " @param text '\\0' terminated character string. NULL to refresh with the current text."]
-                pub fn lv_label_set_text(label: *mut lv_obj_t, text: *const cty::c_char);
+                pub fn lv_label_set_text(label: *mut lv_obj_t, text: *const core::ffi::c_char);
             }
         };
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();
@@ -634,7 +634,7 @@ mod test {
                 unsafe {
                     lvgl_sys::lv_label_set_text(
                         self.core.raw().as_mut(),
-                        text.as_ptr()
+                        text
                     );
                 }
             }
@@ -651,7 +651,7 @@ mod test {
                 #[doc = " Set a new text for a label. Memory will be allocated to store the text by the label."]
                 #[doc = " @param label pointer to a label object"]
                 #[doc = " @param text '\\0' terminated character string. NULL to refresh with the current text."]
-                pub fn lv_label_set_text(label: *mut lv_obj_t, text: *const cty::c_char);
+                pub fn lv_label_set_text(label: *mut lv_obj_t, text: *const core::ffi::c_char);
             }
         };
         let cg = CodeGen::load_func_defs(bindgen_code.to_string().as_str()).unwrap();

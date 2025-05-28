@@ -111,12 +111,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cty"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
-
-[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -203,7 +197,6 @@ version = "0.6.2"
 dependencies = [
  "bitflags",
  "ctor",
- "cty",
  "embedded-graphics",
  "lvgl-codegen",
  "lvgl-sys",
@@ -230,7 +223,6 @@ version = "0.6.2"
 dependencies = [
  "bindgen",
  "cc",
- "cty",
 ]
 
 [[package]]

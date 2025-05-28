@@ -16,7 +16,6 @@ build = "build.rs"
 
 [dependencies]
 lvgl-sys = { version = "0.6.2", path = "../lvgl-sys" }
-cty = "0.2.2"
 embedded-graphics = { version = "0.8.0", optional = true }
 bitflags = "2.3.2"
 paste = "1.0.12"

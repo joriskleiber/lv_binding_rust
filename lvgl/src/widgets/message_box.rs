@@ -11,7 +11,7 @@ impl MessageBox<'_> {
         parent: &mut impl crate::NativeObject,
         title: &CStr,
         txt: &CStr,
-        btn_txts: *mut *const cty::c_char,
+        btn_txts: *mut *const core::ffi::c_char,
         add_close_btn: bool,
     ) -> LvResult<Self> {
         unsafe {
